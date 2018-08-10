@@ -2,7 +2,7 @@
     
 require('./navbar/download-button');
 
-const navbarExtensions = require('ui/registry/navbar_extensions');
+import { NavBarExtensionsRegistryProvider } from 'ui/registry/navbar_extensions';
 
 function discoverControlProvider() {
   return {
@@ -11,7 +11,9 @@ function discoverControlProvider() {
     icon: 'fa-download',
     template: '<kibana-discover-csv-export-button config-template="configTemplate"></kibana-discover-csv-export-button>',
     description: 'csv export',
+    key: 'csv-export-button',
+    label: 'Export CSV',
   };
 }
 
-navbarExtensions.register(discoverControlProvider);
+NavBarExtensionsRegistryProvider.register(discoverControlProvider);
