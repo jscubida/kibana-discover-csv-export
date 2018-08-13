@@ -58,10 +58,10 @@ module.exports = function (kibana) {
                 toRun += '-rq \'' + query + '\' ';
                 toRun += '-S ' + sort + ' ';
                 toRun += '-o ' + fullPath + ' ';
-                if 'url' in config {
+                if ('url' in config) {
                     toRun += '-u ' + config.url + ' ';
                 }
-                if 'auth' in config {
+                if ('auth' in config) {
                     toRun += '-a ' + config.auth + ' ';
                 }
                 console.log(toRun);
