@@ -9,7 +9,7 @@ config.outputFile = 'outputFile.csv';
 
 // The path that the process will write the CSV file to. Make sure the 'kibana' 
 // user has write permissions to this folder and no trailing slash
-config.outFolderPath = '~/Documents';
+config.outFolderPath = '/Users/jc/Downloads/kibana';
 
 // OPTIONAL:
 
