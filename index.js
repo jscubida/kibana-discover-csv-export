@@ -45,10 +45,30 @@ module.exports = function (kibana) {
                     return JSON.stringify({'query': query});
                 };
                 
+                /**
+                 Format fields from Array to string.
+                 @param {Array} fields
+                 @return {string}
+                 */
+                let formatFields = function (fields) {
+                    let len = fields.length;
+                    var i = 0;
+                    var formatted = '';
+                    for (i=0; i<len; i++) {
+                        var field = fields[i];
+                        if (field[0] == '_') {
+                            field = field.substr(1);
+                        }
+                        formatted += '' + field + ' ';
+                    }
+                    return formatted;
+                };
+                
                 let payload = req.payload;
                 let index = payload.index;
                 let query = formatQuery(JSON.parse(payload.query));
                 let sort = formatSort(JSON.parse(payload.sort));
+                console.log(payload.fields);
                 let fields = JSON.parse(payload.fields);
                 let outputFolder = config.outFolderPath;
                 let outputFile = config.outputFile;
@@ -59,7 +79,7 @@ module.exports = function (kibana) {
                 toRun += '-rq \'' + query + '\' ';
                 toRun += '-S ' + sort + ' ';
                 if (fields.length > 0) {
-                    toRun += '-f ' + fields.join(' ') + ' ';
+                    toRun += '-f ' + formatFields(fields) + ' ';
                 }
                 toRun += '-o ' + fullPath + ' ';
                 if ('url' in config) {
