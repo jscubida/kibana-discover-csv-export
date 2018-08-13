@@ -49,6 +49,7 @@ module.exports = function (kibana) {
                 let index = payload.index;
                 let query = formatQuery(JSON.parse(payload.query));
                 let sort = formatSort(JSON.parse(payload.sort));
+                let fields = JSON.parse(payload.fields);
                 let outputFolder = config.outFolderPath;
                 let outputFile = config.outputFile;
                 let fullPath = outputFolder + '/' + outputFile;
@@ -57,6 +58,9 @@ module.exports = function (kibana) {
                 toRun += '-i ' + index + ' ';
                 toRun += '-rq \'' + query + '\' ';
                 toRun += '-S ' + sort + ' ';
+                if (fields.length > 0) {
+                    toRun += '-f ' + fields.join(' ') + ' ';
+                }
                 toRun += '-o ' + fullPath + ' ';
                 if ('url' in config) {
                     toRun += '-u ' + config.url + ' ';

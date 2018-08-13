@@ -24,17 +24,36 @@ module.directive('kibanaDiscoverCsvExportButton', () => {
                     let csv = new Blob([formatted], { type: 'text/plain;charset=utf-8' });
                     self._saveAs(csv, 'kibana-discover-csv-export.csv');
                 };
+                self.fetchFields = function() {
+                    let selected = $window.document.getElementsByClassName('discover-selected-fields');
+                    if (selected == undefined) {
+                        return [];
+                    }
+                    let numSelected = selected[0].children.length;
+                    var i = 0;
+                    var fields = [];
+                    for (i=0; i<numSelected; i++) {
+                        let field = selected[0].children[i];
+                        let fieldName = field.getAttribute('attr-field');
+                        if (fieldName != '_source') {
+                            fields.push(fieldName);
+                        }
+                    }
+                    return fields;
+                };
                 let index = $route.current.locals.savedSearch.searchSource._state.index.title;
                 var params_body = angular.copy($route.current.locals.savedSearch.searchSource.history[0].fetchParams.body);
-                params_body.query.bool.must.map(function (query) { query['$state'] = undefined; return query; })
-                params_body.query.bool.must_not.map(function (query) { query['$state'] = undefined; return query; })
+                params_body.query.bool.must.map(function (query) { query['$state'] = undefined; return query; });
+                params_body.query.bool.must_not.map(function (query) { query['$state'] = undefined; return query; });
                 let query = angular.toJson(params_body.query);
                 let sort = angular.toJson(params_body.sort);
+                let fields = angular.toJson(self.fetchFields());
                 $.post('../api/kibana-discover-csv-export/download',
                 {
                     index: index,
                     query: query,
-                    sort: sort
+                    sort: sort,
+                    fields: fields
                 }
                 ).done(function (data) {
                     self.exportAsCsv(data);
