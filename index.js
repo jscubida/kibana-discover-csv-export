@@ -18,6 +18,7 @@ module.exports = function (kibana) {
                 }
             },
             handler(req, reply) {
+                const config = require('./config');
                 /**
                  Format sort from Object to string.
                  @param {Object} toSort
@@ -48,26 +49,27 @@ module.exports = function (kibana) {
                 let index = payload.index;
                 let query = formatQuery(JSON.parse(payload.query));
                 let sort = formatSort(JSON.parse(payload.sort));
-                let outputFile = 'output.csv';
+                let outputFolder = config.outFolderPath;
+                let outputFile = config.outputFile;
+                let fullPath = outputFolder + '/' + outputFile;
                 
                 var toRun = 'es2csv ';
                 toRun += '-i ' + index + ' ';
                 toRun += '-rq \'' + query + '\' ';
                 toRun += '-S ' + sort + ' ';
-                toRun += '-o ' + outputFile;
-                //console.log(toRun);
+                toRun += '-o ' + fullPath + ' ';
+                if 'url' in config {
+                    toRun += '-u ' + config.url + ' ';
+                }
+                if 'auth' in config {
+                    toRun += '-a ' + config.auth + ' ';
+                }
+                console.log(toRun);
                 var cmd=require('node-cmd');
                 cmd.get(
                     toRun,
                     function(err, data, stderr){
-                        cmd.get(
-                            'pwd',
-                            function(err, data, stderr){
-                                let filepath = data.replace(/(\r\n\t|\n|\r\t)/gm,"") + '/' + outputFile;
-                                //console.log(filepath);
-                                reply.file(filepath);
-                            }
-                        );
+                        reply.file(fullPath);
                     }
                 );
             }
