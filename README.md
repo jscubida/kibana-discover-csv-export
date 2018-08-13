@@ -23,3 +23,7 @@ You should remove the contents of Kibana's `optimize` folder before restarting K
 Navigate to the plugin and modify `config.js`. 
 
 Go to Kibana -> Discover. At the top, you should see an Export CSV button. 
+
+## Implementation Notes
+
+A column whose name starts with a `_` may or may not be exported properly. 
