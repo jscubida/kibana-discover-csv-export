@@ -68,7 +68,6 @@ module.exports = function (kibana) {
                 let index = payload.index;
                 let query = formatQuery(JSON.parse(payload.query));
                 let sort = formatSort(JSON.parse(payload.sort));
-                console.log(payload.fields);
                 let fields = JSON.parse(payload.fields);
                 let outputFolder = config.outFolderPath;
                 let outputFile = config.outputFile;
@@ -88,14 +87,24 @@ module.exports = function (kibana) {
                 if ('auth' in config) {
                     toRun += '-a ' + config.auth + ' ';
                 }
-                console.log(toRun);
-                var cmd=require('node-cmd');
-                cmd.get(
-                    toRun,
-                    function(err, data, stderr){
-                        reply.file(fullPath);
-                    }
-                );
+                
+                //console.log(toRun);
+                const { spawn } = require('child_process');
+                const args = [];
+                const opts = {
+                    shell: true,
+                    stdio: 'ignore',
+                    cwd: outputFolder,
+                };
+                const cmd = spawn(toRun, args, opts);
+                cmd.on('close', function (code) {
+                    console.log(`done with code: ${code}`);
+                    reply.file(fullPath);
+                });
+                cmd.on('error', function (err) {
+                    console.error(`Failed with error: ${err}`);
+                    reply.error(err);
+                });
             }
         });
     }

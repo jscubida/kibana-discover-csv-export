@@ -48,23 +48,31 @@ module.directive('kibanaDiscoverCsvExportButton', () => {
                 let query = angular.toJson(params_body.query);
                 let sort = angular.toJson(params_body.sort);
                 let fields = angular.toJson(self.fetchFields());
-                $.post('../api/kibana-discover-csv-export/download',
-                {
-                    index: index,
-                    query: query,
-                    sort: sort,
-                    fields: fields
-                }
-                ).done(function (data) {
-                    self.exportAsCsv(data);
-                    $scope.download.processing = false;
-                    $scope.download.state = 'Done!'
-                    $scope.download.progress = 100;
-                }).fail(function (data) {
-                    $scope.download.state = 'Retrieving data : Error: (' + data.state() + ') ' + JSON.stringify(data);
-                    $scope.download.processing = false;
-                    $scope.download.status = 500;
-            });
+                $.ajax({
+                    url: '../api/kibana-discover-csv-export/download',
+                    method: 'POST',
+                    timeout: 0,
+                    data: {
+                       index: index,
+                       query: query,
+                       sort: sort,
+                       fields: fields
+                    },
+                    success: function (data, status, response) {
+                       self.exportAsCsv(data);
+                       console.log(status);
+                       console.log(JSON.stringify(response));
+                       $scope.download.processing = false;
+                       $scope.download.state = 'Done!';
+                       $scope.download.progress = 100;
+                    },
+                    error: function (response, status, err) {
+                       $scope.download.state = 'Error: (' + status + ') ' + JSON.stringify(err);
+                       $scope.download.processing = false;
+                       $scope.download.status = 500;
+                       $scope.download.progress = 100;
+                    },
+                });
         }
     }
 })
