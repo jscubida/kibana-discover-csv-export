@@ -12,7 +12,7 @@ function discoverControlProvider() {
     template: '<kibana-discover-csv-export-button config-template="configTemplate"></kibana-discover-csv-export-button>',
     description: 'csv export',
     key: 'csv-export-button',
-    label: 'Export CSV',
+    label: 'Export',
   };
 }
 

@@ -19,4 +19,16 @@ config.outFolderPath = '/';
 // Elasticsearch basic authentication in the form of username:password
 // config.auth = 'username:password';
 
+// BOX:
+
+// OAuth application credentials
+// config.oauthClientId = 'xxx';
+// config.oauthClientSecret = 'xxx';
+
+// Redirect URI
+// config.redirectURI = 'url';
+
+// Logo to display in Box folder picker
+// config.logoUrl = 'url';
+
 module.exports = config;

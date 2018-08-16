@@ -1,2 +1,9 @@
 <div>{{download.state}}</div>
 <progressbar max="100" ng-if="download.processing" value="download.progress"></progressbar>
+<div>
+    <button class="btn btn-primary" type="button" ng-click="uploadToBox()">Upload to Box</button>
+    <button class="btn btn-primary" type="button" ng-click="downloadCSV()">Download CSV</button>
+    <button class="btn btn-primary" type="button" ng-click="deauthorizeBox()" ng-show="isLoggedIn">De-authorize Box</button>
+</div>
+<div class="container" ng-show="isLoggedIn">
+</div>
