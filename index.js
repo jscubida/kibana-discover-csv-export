@@ -128,7 +128,8 @@ module.exports = function (kibana) {
             handler(req, reply) {
                 var config = require('./config');
                 
-                // Create unique filename for CSV file
+                // Create unique temporary filename for CSV file
+                const origFilename = config.outputFile;
                 var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
                 var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
                 config.outputFile = localISOTime + '_' + config.outputFile;
@@ -169,13 +170,14 @@ module.exports = function (kibana) {
                           callback);
                         
                         function callback(err, res) {
-                          if (err) {
-                              reply(Boom.badImplementation(err));
-                              return;
-                          }
-                          // Clean up temporary file
-                          fs.unlink(fullPath);
-                          reply(res);
+                            // Clean up temporary file
+                            fs.unlink(fullPath);
+                            config.outputFile = origFilename;
+                            if (err) {
+                                reply(Boom.badImplementation(err));
+                                return;
+                            }
+                            reply(res);
                         }
                     }, 
                     function (err) {
@@ -197,7 +199,8 @@ module.exports = function (kibana) {
             handler(req, reply) {
                 var config = require('./config');
                 
-                // Create unique filename for this CSV file
+                // Create unique temporary filename for this CSV file
+                const origFilename = config.outputFile;
                 var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
                 var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
                 config.outputFile = localISOTime + '_' + config.outputFile;
@@ -214,6 +217,8 @@ module.exports = function (kibana) {
                     const fs = require('fs');
                     const output = fs.readFileSync(fullPath, 'utf8');
                     reply(output);
+                    // Clean up temporary file
+                    config.outputFile = origFilename;
                     fs.unlink(fullPath);
                 };
                 let onFailure = function (err) {
