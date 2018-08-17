@@ -28,6 +28,9 @@ config.outFolderPath = '/';
 // Redirect URI
 // config.redirectURI = 'url';
 
+// Auth redirect path: After saving the Box token, path to redirect to
+// config.authRedirectPath = '/app/kibana#/discover';
+
 // Logo to display in Box folder picker
 // config.logoUrl = 'url';
 

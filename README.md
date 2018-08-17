@@ -15,6 +15,7 @@ Export query results as CSV files from the Kibana Discover tab.
     sudo pip install es2csv
     npm install @elastic/filesaver
     npm install node-cmd
+    npm install box-sdk
 
 You should remove the contents of Kibana's `optimize` folder before restarting Kibana.
 
@@ -22,7 +23,7 @@ You should remove the contents of Kibana's `optimize` folder before restarting K
 
 Navigate to the plugin and modify `config.js`. 
 
-Go to Kibana -> Discover. At the top, you should see an Export CSV button. 
+Go to Kibana -> Discover. At the top, you should see an Export button. 
 
 ## Implementation Notes
 

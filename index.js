@@ -239,7 +239,7 @@ module.exports = function (kibana) {
                 });
                 boxSDK.getTokensAuthorizationCodeGrant(code, null, function(err, tokenInfo) {
                     reply.state('box', {authKey: tokenInfo});
-                    reply.redirect('/rtf/app/kibana#/discover');
+                    reply.redirect(config.authRedirectPath);
                 });
             }
         });
