@@ -13,16 +13,31 @@ module.directive('kibanaDiscoverCsvExportButton', () => {
                 const appConfig = require('../../config');
                 
                 /**
+                    Tries to save the current state of the discover view
+                */
+                self.saveDiscoverState = function () {
+                    const splitHash = $window.location.hash.split('?');
+                    if (splitHash.length == 2) {
+                        $.post({
+                            url: '../api/kibana-discover-csv-export/saveDiscoverState',
+                            data: {
+                                state: splitHash[1]
+                            }
+                        });
+                    }
+                };
+                /**
                  Show login for Box
                 */
                 self.showBoxAuth = function () {
-                   const querystring = require('querystring');
+                    self.saveDiscoverState();
+                    const querystring = require('querystring');
                 
-                   // Build Box auth object
-                   const payload = {
-                       'response_type': 'code',
-                       'client_id': appConfig.oauthClientId,
-                       'redirect_uri': appConfig.redirectURI
+                    // Build Box auth object
+                    const payload = {
+                        'response_type': 'code',
+                        'client_id': appConfig.oauthClientId,
+                        'redirect_uri': appConfig.redirectURI,
                     };
                 
                     // Build redirect URI and redirect
@@ -235,7 +250,7 @@ module.directive('kibanaDiscoverCsvExportButton', () => {
                         error: function (response, status, err) {
                             $scope.download.state = 'Error: (' + status + ') ' + JSON.stringify(response);
                         },                        
-                    })
+                    });
                 };
                 /**
                     Try to find a Box access token for the currently logged in 

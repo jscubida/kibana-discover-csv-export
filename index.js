@@ -113,6 +113,12 @@ module.exports = function (kibana) {
             path: '/',
             encoding: 'base64json'
         });
+        server.state('viewState', {
+            ttl: 30 * 24 * 60 * 60 * 1000, // Thirty days
+            isSecure: true,
+            path: '/',
+            encoding: 'base64json'            
+        });
         /**
             Generate CSV file of passed in Elasticsearch query parameters and
             upload it to Box
@@ -244,10 +250,19 @@ module.exports = function (kibana) {
                 });
                 boxSDK.getTokensAuthorizationCodeGrant(code, null, function(err, tokenInfo) {
                     reply.state('box', {authKey: tokenInfo});
-                    reply.redirect(config.authRedirectPath);
+                    const viewState = req.state.viewState.discover;
+                    var path = config.authRedirectPath;
+                    if (viewState && viewState.length > 0) {
+                        path += '?' + viewState;
+                        reply.unstate('viewState');
+                    }
+                    reply.redirect(path);
                 });
             }
         });
+        /**
+            Check if box auth key exists
+        */
         server.route({
             path: '/api/kibana-discover-csv-export/boxAuthKey',
             method: 'GET',
@@ -259,11 +274,25 @@ module.exports = function (kibana) {
                 }
             }
         });
+        /**
+            Delete box auth key cookie
+        */
         server.route({
             path: '/api/kibana-discover-csv-export/deauthorizeBox',
             method: 'POST',
             handler(req, reply) {
                 reply.unstate('box');
+                reply();
+            }
+        })
+        /**
+            Save discover view state in cookie
+        */
+        server.route({
+            path: '/api/kibana-discover-csv-export/saveDiscoverState',
+            method: 'POST',
+            handler(req, reply) {
+                reply.state('viewState', {discover: req.payload.state});
                 reply();
             }
         })
